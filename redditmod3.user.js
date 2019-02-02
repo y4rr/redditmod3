@@ -79,7 +79,7 @@
         infiniteScrolling: true,
         loadPostsInline: true,
         collapsableComments: true,
-        usernamePrivacy: true,,
+        usernamePrivacy: true,
         karmaPrivacy: true
       }
     };
