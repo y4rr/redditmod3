@@ -1,10 +1,12 @@
 // ==UserScript==
 // @name        redditmod3
-// @namespace   y4r.cc
+// @namespace   cc.y4r
+// @author      y4r
 // @description inline posts/comments, endless scrolling, and other improvements for reddit.com
 // @include     http://*.reddit.com/*
 // @include     https://*.reddit.com/*
-// @version     2.2.1
+// @version     1.0.0
+// @license     WTFPL
 // @grant       GM.getValue
 // @grant       GM.setValue
 // @grant       GM.xmlHttpRequest
@@ -28,7 +30,7 @@
 // ==/UserScript==
 
 /** TODO
- * Support domains: giphy, flickr, prnt.sc, questionablecontent
+ * Support domains: giphy, flickr
  * Can't collapse/expand comments provided by RedditPromise for some reason... need to hijack onclick?
  * Can't click links in inline-comments (should be target=_blank).
  * Clicking bottom of inline-comment (marked as hovered) doesn't expand/collapse.
@@ -70,10 +72,13 @@
 
     // Existing values are the *default*
     const config = {
+      const CSS_COLLAPSABLE_COMMENTS = '.comment.collapsed {padding-bottom: 20px;padding-top: 8px;} .comment.collapsed .tagline, .comment.collapsed .tagline a, .comment.collapsed .search-result-meta, .comment.collapsed .search-result-meta a, .comment.collapsed > span {font-style: normal !important;} .tagline > a.expamd {display: none !important}';
+      
       tweaks: {
         autoAlign: true,
         infiniteScrolling: true,
-        loadPostsInline: true
+        loadPostsInline: true,
+        collapsableComments: true
       }
     };
 
@@ -113,12 +118,14 @@
       return [
         { name: 'Infinite Scrolling',    id: 'infiniteScrolling', enabled: config.tweaks.infiniteScrolling, title: "Load next page when you reach the bottom" },
         { name: 'Load Pages Inline',     id: 'loadPostsInline',   enabled: config.tweaks.loadPostsInline, title: "Add the next page of posts to the bottom of the current page (ignored when 'Infinite Scrolling' is enabled)." },
-        { name: 'Auto-align on expand',  id: 'autoAlign',         enabled: config.tweaks.autoAlign, title: "Scroll so the clicked post is at the top of the screen." }
+        { name: 'Auto-align on expand',  id: 'autoAlign',         enabled: config.tweaks.autoAlign, title: "Scroll so the clicked post is at the top of the screen." },
+        { name: 'Collapsable comments',  id: 'collapsableComments',         enabled: config.tweaks.collapsableComments, title: "Double click on a comment to collapse its tree" }
       ];
     }
 
     function getTweakCSS() {
       const results = [];
+      if (config.tweaks.collapsableComments)           { results.push(CSS_COLLAPSABLE_COMMENTS); }
       // if (config.tweaks.noAds)           { results.push(CSS_NO_ADS); }
       // if (config.tweaks.noChat)          { results.push(CSS_NO_CHAT); }
       // if (config.tweaks.noSublist)       { results.push(CSS_NO_SUBLIST); }
@@ -825,7 +832,8 @@
     return new Promise(resolve => {
       menuPromise.then(menu => {
         processPosts();
-        resolve({processors, processPost, processPosts});
+        processComments();
+        resolve({processors, processPost, processPosts, processComment, processComments});
       });
     });
 
@@ -857,7 +865,6 @@
       overrideNextButton();
       scrollListener();
       addScrollListener();
-      commentClickExpand();
     });
 
     return {scrollListener, addScrollListener};
@@ -933,6 +940,7 @@
         } else if (!document.querySelector('#' + thing.id)) {
           /* !!!!!!! */
           processor.processPost(thing);
+          /* !!!!!! */
           previousNav.parentNode.insertBefore(thing, previousNav);
         } else {
           debug('[Navigation.loadMorePosts._injectPosts] Ignoring duplicate post. thing.id:', thing.id);
@@ -945,65 +953,6 @@
       addScrollListener();
       loading = false;
       setTimeout(scrollListener, 250);
-    }
-
-    function commentClickExpand() {
-      document.querySelectorAll('.commentarea .sitetable > *:not(.clearleft)').forEach(thing => {
-          thing.ondblclick = event => {
-              if (event && event.target && event.target.tagName === 'A') {
-                return true; // Pass-through
-              } else {
-                // Expand/collapse comment tree
-                stopEvent(event);
-                $(thing).toggleClass("collapsed noncollapsed");
-                return false;
-              }
-            };
-      });
-
-
-//       const commentArea = document.querySelector('.commentarea .sitetable');
-//       debug('commentArea', commentArea);
-//       if (!commentArea) return;
-
-//       commentArea.querySelectorAll('.thing').forEach(thing => {
-//         thing.addEventListener('dblclick', event => {
-//           // Expand/collapse comment tree
-//           stopEvent(event);
-//           debug('event', event);
-//           const expandButton = thing.querySelector('a.expand');
-//           if (!expandButton) return;
-//           debug('expandButton ', expandButton);
-//           expandButton.click();
-//         });
-//             entry.ondblclick = event => {
-//               if (event && event.target && event.target.tagName === 'A') {
-//                 return true; // Pass-through
-//               } else {
-//                 // Expand/collapse comment tree
-//                 stopEvent(event);
-//                                 debug($(commentArea));
-
-
-//                 debug($(entry));
-//                 return togglecomment(entry);
-//                 //entry.querySelector('a.expand').click();
-//                 return false;
-//               }
-//             };
-
-      // commentArea.querySelectorAll('.thing').forEach(thing => {
-      //   debug('thing', thing);
-      //   thing.addEventListener('dblclick', event => {
-      //     // Expand/collapse comment tree
-      //     stopEvent(event);
-      //     debug('event', event);
-      //     const expandButton = thing.querySelector('a.expand');
-      //     if (!expandButton) return;
-      //     debug('expandButton ', expandButton);
-      //     expandButton.click();
-      //   });
-      // });
     }
 
     function overrideNextButton() {
