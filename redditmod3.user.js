@@ -27,6 +27,7 @@
 // @connect     xkcd.com
 // @run-at      document-start
 // @require     https://greasemonkey.github.io/gm4-polyfill/gm4-polyfill.js
+// @updateUrl   https://github.com/y4rr/redditmod3/raw/master/redditmod3.user.js
 // ==/UserScript==
 
 /** TODO
