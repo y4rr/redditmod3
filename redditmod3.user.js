@@ -49,8 +49,8 @@
   function debug() {
     if (!DEBUG) return;
     const args = ['[Redditmod@'
-                  + (new Error()).stack.replace(/.*\?id=[a-f0-9\-]*:/g, '').replace(/@.*[^\r\n]/g, '').replace(/\n\n/g, '').replace(/\n$/g, '').replace(/\n/g, ' <- ')
-                  + ']'];
+      + (new Error()).stack.replace(/.*\?id=[a-f0-9\-]*:/g, '').replace(/@.*[^\r\n]/g, '').replace(/\n\n/g, '').replace(/\n$/g, '').replace(/\n/g, ' <- ')
+      + ']'];
     for (let i = 0; i < arguments.length; i++) {
       args.push(arguments[i]);
     }
@@ -86,18 +86,18 @@
       const keys = Object.keys(config);
       Promise.all(keys.map(key => GM.getValue('redditmod-' + key)))
         .then(values => {
-        // Load config
-        values.forEach((value, keyIndex) => {
-          if (value !== undefined) {
-            config[keys[keyIndex]] = JSON.parse(value);
-          }
-        });
+          // Load config
+          values.forEach((value, keyIndex) => {
+            if (value !== undefined) {
+              config[keys[keyIndex]] = JSON.parse(value);
+            }
+          });
 
-        // Expose public methods
-        resolve({
-          getTweaks, setTweak, getTweakCSS, isTweakEnabled
+          // Expose public methods
+          resolve({
+            getTweaks, setTweak, getTweakCSS, isTweakEnabled
+          });
         });
-      });
     });
 
     /* optionalKey: if given, only saves that key of the config. */
@@ -116,16 +116,16 @@
 
     function getTweaks() {
       return [
-        { name: 'Infinite Scrolling',    id: 'infiniteScrolling', enabled: config.tweaks.infiniteScrolling, title: "Load next page when you reach the bottom" },
-        { name: 'Load Pages Inline',     id: 'loadPostsInline',   enabled: config.tweaks.loadPostsInline, title: "Add the next page of posts to the bottom of the current page (ignored when 'Infinite Scrolling' is enabled)." },
-        { name: 'Auto-align on expand',  id: 'autoAlign',         enabled: config.tweaks.autoAlign, title: "Scroll so the clicked post is at the top of the screen." },
-        { name: 'Collapsable comments',  id: 'collapsableComments',         enabled: config.tweaks.collapsableComments, title: "Double click on a comment to collapse its tree" }
+        { name: 'Infinite Scrolling', id: 'infiniteScrolling', enabled: config.tweaks.infiniteScrolling, title: "Load next page when you reach the bottom" },
+        { name: 'Load Pages Inline', id: 'loadPostsInline', enabled: config.tweaks.loadPostsInline, title: "Add the next page of posts to the bottom of the current page (ignored when 'Infinite Scrolling' is enabled)." },
+        { name: 'Auto-align on expand', id: 'autoAlign', enabled: config.tweaks.autoAlign, title: "Scroll so the clicked post is at the top of the screen." },
+        { name: 'Collapsable comments', id: 'collapsableComments', enabled: config.tweaks.collapsableComments, title: "Double click on a comment to collapse its tree" }
       ];
     }
 
     function getTweakCSS() {
       const results = [];
-      if (config.tweaks.collapsableComments)           { results.push(CSS_COLLAPSABLE_COMMENTS); }
+      if (config.tweaks.collapsableComments) { results.push(CSS_COLLAPSABLE_COMMENTS); }
       // if (config.tweaks.noAds)           { results.push(CSS_NO_ADS); }
       // if (config.tweaks.noChat)          { results.push(CSS_NO_CHAT); }
       // if (config.tweaks.noSublist)       { results.push(CSS_NO_SUBLIST); }
@@ -151,7 +151,7 @@
     const onHead = _onNode('head'); /* Wait for <head> to appear. */
     const onBody = _onNode('body'); /* Wait for <body> to appear. */
 
-    return {onDOM, onHead, applyStyle, removeStyle};
+    return { onDOM, onHead, applyStyle, removeStyle };
 
     /** Promises a child node immediately under the root `document`. Waits if node is not found. */
     function _onNode(documentKey) {
@@ -195,7 +195,7 @@
             style.removeChild(style.firstChild);
           } else {
             style = document.createElement('style');
-            Object.assign(style, { id:id, type:'text/css', className:'redditmod-style' });
+            Object.assign(style, { id: id, type: 'text/css', className: 'redditmod-style' });
           }
           style.appendChild(document.createTextNode(css));
           head.appendChild(style);
@@ -219,19 +219,19 @@
 
     let isInitialized = false;
     let config;
-    return {init};
+    return { init };
 
     function init(theConfig) {
       config = theConfig;
       return new Promise(resolve => {
         if (isInitialized) {
-          resolve({updateMenuSection});
+          resolve({ updateMenuSection });
         } else {
           CSS.onDOM().then(() => {
             resetMenu();
             CSS.applyStyle(MENU_STYLE_ID, MENU_STYLE);
             isInitialized = true;
-            resolve({updateMenuSection});
+            resolve({ updateMenuSection });
           });
         }
       });
@@ -256,12 +256,12 @@
       if (!dropdown) return;
 
       if (document.querySelector('.drop-choices.srdrop .redditmod-menu-header') !== null && document.querySelector('#' + id) === null) {
-        create('hr',  {className:'redditmod-menu-spacer'}, dropdown);
+        create('hr', { className: 'redditmod-menu-spacer' }, dropdown);
       }
 
-      const section = document.querySelector('#' + id) || create('div', {id}, dropdown);
-      const header  =  section.querySelector('.redditmod-menu-header') || create('h3',  {className:'redditmod-menu-header'}, section);
-      const links   =  section.querySelector('.redditmod-menu-links')  || create('div', {className:'redditmod-menu-links'},  section);
+      const section = document.querySelector('#' + id) || create('div', { id }, dropdown);
+      const header = section.querySelector('.redditmod-menu-header') || create('h3', { className: 'redditmod-menu-header' }, section);
+      const links = section.querySelector('.redditmod-menu-links') || create('div', { className: 'redditmod-menu-links' }, section);
 
       header.textContent = title;
       links.innerHTML = '';
@@ -274,22 +274,22 @@
 
   const MEDIA = (() => {
     const CLASS_MEDIA_EXPANDED = 'redditmod-media-expanded',
-          CLASS_COMMENTS_EXPANDED = 'redditmod-comments-expanded',
-          CLASS_MEDIABOX = 'redditmod-media-box',
-          CLASS_COMMENTS = 'redditmod-comments-box',
-          CLASS_MEDIA    = 'redditmod-media',
-          CLASS_SPINNER  = 'redditmod-media-spinner',
-          CLASS_ERROR    = 'redditmod-media-error',
-          MEDIA_STYLE_ID = 'redditmod-media-style',
-          MEDIA_STYLE_CSS = '.redditmod-media-box, .redditmod-comments-box{max-height:0; height:0; overflow:hidden; transition: height linear 0.2s, max-height linear 0.2s}' +
-          '.redditmod-media{}' + // ???
-          '.redditmod-media-expanded .redditmod-media-box, .redditmod-comments-expanded .redditmod-comments-box{max-height:10000px; height:auto}' +
-          '.redditmod-media-spinner,.redditmod-media-spinner:after{border-radius:50%;width:10em;height:10em}.redditmod-media-spinner{margin:60px auto;font-size:10px;position:relative;text-indent:-9999em;border-top:1.1em solid rgba(255,255,255,.2);border-right:1.1em solid rgba(255,255,255,.2);border-bottom:1.1em solid rgba(255,255,255,.2);border-left:1.1em solid #fff;-webkit-transform:translateZ(0);-ms-transform:translateZ(0);transform:translateZ(0);-webkit-animation:load8 1.1s infinite linear;animation:load8 1.1s infinite linear}@-webkit-keyframes load8{0%{-webkit-transform:rotate(0);transform:rotate(0)}100%{-webkit-transform:rotate(360deg);transform:rotate(360deg)}}@keyframes load8{0%{-webkit-transform:rotate(0);transform:rotate(0)}100%{-webkit-transform:rotate(360deg);transform:rotate(360deg)}}' +
-          '.redditmod-media-error{background-color:rgba(255,0,0,0.3); color:#fff; text-shadow:1px 1px #000}';
+      CLASS_COMMENTS_EXPANDED = 'redditmod-comments-expanded',
+      CLASS_MEDIABOX = 'redditmod-media-box',
+      CLASS_COMMENTS = 'redditmod-comments-box',
+      CLASS_MEDIA = 'redditmod-media',
+      CLASS_SPINNER = 'redditmod-media-spinner',
+      CLASS_ERROR = 'redditmod-media-error',
+      MEDIA_STYLE_ID = 'redditmod-media-style',
+      MEDIA_STYLE_CSS = '.redditmod-media-box, .redditmod-comments-box{max-height:0; height:0; overflow:hidden; transition: height linear 0.2s, max-height linear 0.2s}' +
+        '.redditmod-media{}' + // ???
+        '.redditmod-media-expanded .redditmod-media-box, .redditmod-comments-expanded .redditmod-comments-box{max-height:10000px; height:auto}' +
+        '.redditmod-media-spinner,.redditmod-media-spinner:after{border-radius:50%;width:10em;height:10em}.redditmod-media-spinner{margin:60px auto;font-size:10px;position:relative;text-indent:-9999em;border-top:1.1em solid rgba(255,255,255,.2);border-right:1.1em solid rgba(255,255,255,.2);border-bottom:1.1em solid rgba(255,255,255,.2);border-left:1.1em solid #fff;-webkit-transform:translateZ(0);-ms-transform:translateZ(0);transform:translateZ(0);-webkit-animation:load8 1.1s infinite linear;animation:load8 1.1s infinite linear}@-webkit-keyframes load8{0%{-webkit-transform:rotate(0);transform:rotate(0)}100%{-webkit-transform:rotate(360deg);transform:rotate(360deg)}}@keyframes load8{0%{-webkit-transform:rotate(0);transform:rotate(0)}100%{-webkit-transform:rotate(360deg);transform:rotate(360deg)}}' +
+        '.redditmod-media-error{background-color:rgba(255,0,0,0.3); color:#fff; text-shadow:1px 1px #000}';
 
     CSS.applyStyle(MEDIA_STYLE_ID, MEDIA_STYLE_CSS);
 
-    return {postClick};
+    return { postClick };
 
     function postClick(thing, event) {
       const target = event.target;
@@ -312,8 +312,8 @@
         return true;
 
       } else if ((target.tagName === 'A') ||
-                 (target.tagName === 'VIDEO' && target.controls === 'true') ||
-                 (target.classList.contains('expando-button'))) {
+        (target.tagName === 'VIDEO' && target.controls === 'true') ||
+        (target.classList.contains('expando-button'))) {
         return true; // Pass-through
 
       } else {
@@ -340,21 +340,21 @@
         return existing;
       }
 
-      const commentsBox = _create('div', {className:CLASS_COMMENTS}, thing);
+      const commentsBox = _create('div', { className: CLASS_COMMENTS }, thing);
       commentsBox.onclick = stopEvent;
       commentsBox._toggle = () => {
         thing.classList.remove(CLASS_MEDIA_EXPANDED);
         thing.classList.toggle(CLASS_COMMENTS_EXPANDED);
       };
 
-      const spinner = _create('div', {className:CLASS_SPINNER}, commentsBox);
+      const spinner = _create('div', { className: CLASS_SPINNER }, commentsBox);
       RedditCommentsPromise(thingUrl)
         .then(container => {
-        commentsBox.removeChild(spinner);
-        commentsBox.appendChild(container);
-      }).catch(reason => {
-        debug('RedditCommentsPromise rejected, reason:', reason);
-      });
+          commentsBox.removeChild(spinner);
+          commentsBox.appendChild(container);
+        }).catch(reason => {
+          debug('RedditCommentsPromise rejected, reason:', reason);
+        });
 
       return commentsBox;
     }
@@ -365,7 +365,7 @@
       if (existingMediabox) return existingMediabox;
 
       // Create a custom mediabox
-      const mediaBox = _create('div', {className:CLASS_MEDIABOX}, thing);
+      const mediaBox = _create('div', { className: CLASS_MEDIABOX }, thing);
       mediaBox.onclick = event => {
         stopEvent(event);
         thing.classList.remove(CLASS_COMMENTS_EXPANDED);
@@ -378,24 +378,24 @@
         }
         CONFIG.then(config => {
           if (config.isTweakEnabled('autoAlign')) {
-            thing.scrollIntoView({block: 'start', inline: 'nearest', behavior:'smooth'});
+            thing.scrollIntoView({ block: 'start', inline: 'nearest', behavior: 'smooth' });
           }
         })
       };
 
-      const spinner = _create('div', {className:CLASS_SPINNER}, mediaBox);
+      const spinner = _create('div', { className: CLASS_SPINNER }, mediaBox);
 
       mediaBoxPromise(thingUrl)
         .then(media => {
-        media.classList.add(CLASS_MEDIA);
-        mediaBox.removeChild(spinner);
-        mediaBox.appendChild(media);
-      }).catch(reason => {
-        debug('mediaboxPromise rejected, reason:', reason);
-        mediaBox.removeChild(spinner);
-        const errorBox = _create('div', {className:CLASS_ERROR}, mediaBox);
-        errorBox.textContent = reason;
-      });
+          media.classList.add(CLASS_MEDIA);
+          mediaBox.removeChild(spinner);
+          mediaBox.appendChild(media);
+        }).catch(reason => {
+          debug('mediaboxPromise rejected, reason:', reason);
+          mediaBox.removeChild(spinner);
+          const errorBox = _create('div', { className: CLASS_ERROR }, mediaBox);
+          errorBox.textContent = reason;
+        });
       return mediaBox;
     }
 
@@ -404,18 +404,18 @@
         const url = new URL(urlText);
         const domain = url.hostname.replace(/^(?:.*\.)?(\w+\.\w+)$/, '$1');
         let promise;
-        switch(domain) {
-          case 'imgur.com':      promise = ImgurMediaPromise(url);   break;
-          case 'gfycat.com':     promise = GfycatMediaPromise(url);  break;
-            //           case 'soundcloud.com': promise = SoundcloudPromise(url);   break;
-            //           case 'explosm.net':    promise = ExplosmPromise(url);      break;
-          case 'imgflip.com':    promise = ImgflipPromise(url);      break;
-          case 'streamable.com': promise = StreamablePromise(url);   break;
-          case 'instagram.com':  promise = InstagramPromise(url);    break;
-          case 'deviantart.com': promise = DeviantartPromise(url);   break;
-            //           case 'xkcd.com':       promise = XkcdPromise(url);         break;
-          case 'reddit.com':     promise = RedditPromise(url);       break;
-          default:               promise = GenericMediaPromise(url); break;
+        switch (domain) {
+          case 'imgur.com': promise = ImgurMediaPromise(url); break;
+          case 'gfycat.com': promise = GfycatMediaPromise(url); break;
+          //           case 'soundcloud.com': promise = SoundcloudPromise(url);   break;
+          //           case 'explosm.net':    promise = ExplosmPromise(url);      break;
+          case 'imgflip.com': promise = ImgflipPromise(url); break;
+          case 'streamable.com': promise = StreamablePromise(url); break;
+          case 'instagram.com': promise = InstagramPromise(url); break;
+          case 'deviantart.com': promise = DeviantartPromise(url); break;
+          //           case 'xkcd.com':       promise = XkcdPromise(url);         break;
+          case 'reddit.com': promise = RedditPromise(url); break;
+          default: promise = GenericMediaPromise(url); break;
         }
         promise.then(resolve).catch(reject);
       });
@@ -435,22 +435,22 @@
     function _getJSON(url, headers, use_GM_XHR) {
       return new Promise((resolve, reject) => {
         if (!headers) {
-          headers = {'Accept': 'application/json'};
+          headers = { 'Accept': 'application/json' };
         } else if (!headers.Accept) {
           headers.Accept = 'application/json';
         }
         _getWEB(url, headers, use_GM_XHR)
           .then(responseText => {
-          try {
-            resolve(JSON.parse(responseText));
-          } catch (err) {
-            debug('_getJSON error. url:', url.toString(), 'responseText', responseText);
-            reject('[MEDIA._getJSON] Error parsing JSON text from ' + url.toString() + ' : ' + responseText);
-          }
-        })
+            try {
+              resolve(JSON.parse(responseText));
+            } catch (err) {
+              debug('_getJSON error. url:', url.toString(), 'responseText', responseText);
+              reject('[MEDIA._getJSON] Error parsing JSON text from ' + url.toString() + ' : ' + responseText);
+            }
+          })
           .catch(reason => {
-          reject('[Media._getJSON] Error fetching JSON from url ' + url.toString() + ' reason: ' + reason);
-        });
+            reject('[Media._getJSON] Error fetching JSON from url ' + url.toString() + ' reason: ' + reason);
+          });
       });
     }
 
@@ -499,10 +499,10 @@
       return new Promise((resolve, reject) => {
         _getWEB(url, headers, use_GM_XHR)
           .then(responseText => {
-          const html = document.createElement('html');
-          html.innerHTML = responseText;
-          resolve(html);
-        })
+            const html = document.createElement('html');
+            html.innerHTML = responseText;
+            resolve(html);
+          })
           .catch(reject);
       });
     }
@@ -521,15 +521,15 @@
     function PostlightMediaPromise(url) {
       return new Promise((resolve, reject) => {
         const postlightUrl = 'https://mercury.postlight.com/parser?url=' + encodeURIComponent(url);
-        const headers = {'X-api-key': 'NtFdFjTYzQXF4WUWBivfsnTj0zXZyvwCKbSQeuAB'};
+        const headers = { 'X-api-key': 'NtFdFjTYzQXF4WUWBivfsnTj0zXZyvwCKbSQeuAB' };
         _getJSON(postlightUrl, headers, true)
           .then(resp => {
-          if (resp.content === '<body></body>') {
-            reject('[PostlightMediaProimse] Postlight returned empty content for ' + url);
-          } else {
-            resolve(_create('div', {innerHTML:resp.content, className:'redditmod-media-other'}));
-          }
-        })
+            if (resp.content === '<body></body>') {
+              reject('[PostlightMediaProimse] Postlight returned empty content for ' + url);
+            } else {
+              resolve(_create('div', { innerHTML: resp.content, className: 'redditmod-media-other' }));
+            }
+          })
           .catch(reject);
       });
     }
@@ -542,15 +542,15 @@
           return;
         }
         let index = 0;
-        const container   = _create('div');
-        const nav         = _create('div',  {}, container);
-        const navPrev     = _create('a',    {textContent:'<',href:'#'}, nav);
-        const navCurrent  = _create('span', {textContent:'1'}, nav);
-        const navSep      = _create('span', {textContent:'/'}, nav);
-        const navTotal    = _create('span', {textContent:urls.length}, nav);
-        const navNext     = _create('a',    {textContent:'>',href:'#'}, nav);
-        const imageDiv    = _create('div',  {}, container);
-        const image       = _create('img',  {
+        const container = _create('div');
+        const nav = _create('div', {}, container);
+        const navPrev = _create('a', { textContent: '<', href: '#' }, nav);
+        const navCurrent = _create('span', { textContent: '1' }, nav);
+        const navSep = _create('span', { textContent: '/' }, nav);
+        const navTotal = _create('span', { textContent: urls.length }, nav);
+        const navNext = _create('a', { textContent: '>', href: '#' }, nav);
+        const imageDiv = _create('div', {}, container);
+        const image = _create('img', {
           src: urls[0],
           style: 'max-width:100%; max-height:100%; object-fit:scale-down'
         }, imageDiv);
@@ -587,11 +587,11 @@
           controls: false,
           autoplay: true,
           loop: true,
-          style: 'display:block; width:' + (window.innerWidth-75) + 'px; height:' + (window.innerHeight-75) + 'px',
+          style: 'display:block; width:' + (window.innerWidth - 75) + 'px; height:' + (window.innerHeight - 75) + 'px',
         });
         video._onhide = video.pause;
         video._onshow = video.load;
-        urls.forEach(url => _create('source', {src:url}, video));
+        urls.forEach(url => _create('source', { src: url }, video));
         resolve(video);
       });
     }
@@ -605,14 +605,14 @@
           // Album: Extract images
           _getJSON('https://imgur.com/ajaxalbums/getimages/' + albumIdMatches[1] + '/hit.json', {}, true)
             .then(resp => {
-            if (!resp.data.images) {
-              debug('ImgurMediaPromise: No resp.data.images, assuming single image:', albumIdMatches[1] + '.jpg');
-              GenericImagePromise(['https://i.imgur.com/' + albumIdMatches[1] + '.jpg']).then(resolve).catch(reject);
-            } else {
-              debug('ImgurMediaPromise: Got ' + resp.data.images.length + ' images from album');
-              GenericImagePromise(resp.data.images.map(image => 'https://i.imgur.com/' + image.hash + image.ext)).then(resolve).catch(reject);
-            }
-          });
+              if (!resp.data.images) {
+                debug('ImgurMediaPromise: No resp.data.images, assuming single image:', albumIdMatches[1] + '.jpg');
+                GenericImagePromise(['https://i.imgur.com/' + albumIdMatches[1] + '.jpg']).then(resolve).catch(reject);
+              } else {
+                debug('ImgurMediaPromise: Got ' + resp.data.images.length + ' images from album');
+                GenericImagePromise(resp.data.images.map(image => 'https://i.imgur.com/' + image.hash + image.ext)).then(resolve).catch(reject);
+              }
+            });
         } else if (/\.(gifv?|mp4)$/.test(url)) {
           // Video
           debug('ImgurMediaPromise: gifv/mp4');
@@ -640,16 +640,16 @@
         }
         _getDocument(gfycatUrl, {}, true)
           .then(doc => {
-          let video = doc.querySelector('#mp4Source');
-          if (!video) {
-            video = doc.querySelector('.video.media source[type="video/mp4"]');
-          }
-          if (!video || !video.src) {
-            reject('[GfycatMediaPromise] Could not find video at ' + gfycatUrl + ' body: ' + doc.innerHTML);
-          } else {
-            GenericVideoPromise([video.src]).then(resolve);
-          }
-        })
+            let video = doc.querySelector('#mp4Source');
+            if (!video) {
+              video = doc.querySelector('.video.media source[type="video/mp4"]');
+            }
+            if (!video || !video.src) {
+              reject('[GfycatMediaPromise] Could not find video at ' + gfycatUrl + ' body: ' + doc.innerHTML);
+            } else {
+              GenericVideoPromise([video.src]).then(resolve);
+            }
+          })
           .catch(reject);
       });
     }
@@ -670,24 +670,24 @@
       return new Promise((resolve, reject) => {
         _getDocument(url, {}, false)
           .then(doc => {
-          const commentArea = doc.querySelector('.commentarea .sitetable > *:not(.clearleft)');
-          const container = _create('div', {className:'redditmod-media-comments-area'});
-          commentArea.querySelectorAll('.thing').forEach(thing => {
-            thing.ondblclick = event => {
-              if (config.isTweakEnabled('collapsableComments')) {
-                // Expand/collapse comment tree
-                stopEvent(event);
-               $(thing).toggleClass("collapsed noncollapsed");
-                return false;
-              } else {
-                return true; // Pass-through
-              }
-            };
-          });
-          container.appendChild(commentArea);
-          container._click = () => {};
-          resolve(container);
-        })
+            const commentArea = doc.querySelector('.commentarea .sitetable > *:not(.clearleft)');
+            const container = _create('div', { className: 'redditmod-media-comments-area' });
+            commentArea.querySelectorAll('.thing').forEach(thing => {
+              thing.ondblclick = event => {
+                if (config.isTweakEnabled('collapsableComments')) {
+                  // Expand/collapse comment tree
+                  stopEvent(event);
+                  $(thing).toggleClass("collapsed noncollapsed");
+                  return false;
+                } else {
+                  return true; // Pass-through
+                }
+              };
+            });
+            container.appendChild(commentArea);
+            container._click = () => { };
+            resolve(container);
+          })
           .catch(reject);
       });
     }
@@ -696,20 +696,20 @@
       return new Promise((resolve, reject) => {
         _getWEB(url.toString(), {}, true)
           .then(responseText => {
-          let matches = responseText.match(/meta itemprop="embedUrl" content="([^"]*)"/);
-          if (!matches) {
-            matches = responseText.match(/meta property="twitter:player" content="([^"]*)"/);
-          }
-          if (matches && matches.length > 0) {
-            const iframe = _create('iframe', {
-              style: 'width:100%; height:' + (window.innerHeight / 2) + 'px',
-              src: matches[1]
-            });
-            resolve(iframe);
-          } else {
-            reject('[SoundcloudPromise] No soundcloud data found at ' + url.toString());
-          }
-        })
+            let matches = responseText.match(/meta itemprop="embedUrl" content="([^"]*)"/);
+            if (!matches) {
+              matches = responseText.match(/meta property="twitter:player" content="([^"]*)"/);
+            }
+            if (matches && matches.length > 0) {
+              const iframe = _create('iframe', {
+                style: 'width:100%; height:' + (window.innerHeight / 2) + 'px',
+                src: matches[1]
+              });
+              resolve(iframe);
+            } else {
+              reject('[SoundcloudPromise] No soundcloud data found at ' + url.toString());
+            }
+          })
           .catch(reject);
       });
     }
@@ -718,13 +718,13 @@
       return new Promise(function(resolve, reject) {
         _getDocument(url.toString(), {}, true)
           .then(doc => {
-          const imageMeta = doc.querySelector('img#main-comic');
-          if (imageMeta) {
-            GenericImagePromise([imageMeta.src]).then(resolve, reject);
-          } else {
-            reject('[ExplosmPromise] No images found at ' + url.toString());
-          }
-        })
+            const imageMeta = doc.querySelector('img#main-comic');
+            if (imageMeta) {
+              GenericImagePromise([imageMeta.src]).then(resolve, reject);
+            } else {
+              reject('[ExplosmPromise] No images found at ' + url.toString());
+            }
+          })
           .catch(reject);
       });
     }
@@ -737,13 +737,13 @@
         }
         _getDocument(urlText, {}, true)
           .then(doc => {
-          const imageMeta = doc.querySelector('img#im');
-          if (imageMeta) {
-            GenericImagePromise([imageMeta.src]).then(resolve, reject);
-          } else {
-            reject('[ImgflipPromise] No images found at ' + urlText);
-          }
-        })
+            const imageMeta = doc.querySelector('img#im');
+            if (imageMeta) {
+              GenericImagePromise([imageMeta.src]).then(resolve, reject);
+            } else {
+              reject('[ImgflipPromise] No images found at ' + urlText);
+            }
+          })
           .catch(reject);
       });
     }
@@ -755,8 +755,8 @@
         const apiUrl = 'https://api.streamable.com/videos/' + matches[1];
         _getJSON(apiUrl, {}, true)
           .then(json => {
-          GenericVideoPromise([json.files.mp4.url]).then(resolve, reject);
-        }).catch(reject);
+            GenericVideoPromise([json.files.mp4.url]).then(resolve, reject);
+          }).catch(reject);
       });
     }
 
@@ -833,7 +833,7 @@
       menuPromise.then(menu => {
         processPosts();
         processComments();
-        resolve({processors, processPost, processPosts, processComment, processComments});
+        resolve({ processors, processPost, processPosts, processComment, processComments });
       });
     });
 
@@ -842,12 +842,12 @@
     }
 
     function processPost(thing) {
-        // Hide/Show media when post is dblclicked
-        thing.addEventListener('dblclick', event => MEDIA.postClick(thing, event));
+      // Hide/Show media when post is dblclicked
+      thing.addEventListener('dblclick', event => MEDIA.postClick(thing, event));
 
-        // Remove tracking from links if user did not specify in preferences.
-        thing.querySelectorAll('a[data-outbound-url], a[data-outbound-expiration], a[data-inbound-url]')
-          .forEach(anchor => {
+      // Remove tracking from links if user did not specify in preferences.
+      thing.querySelectorAll('a[data-outbound-url], a[data-outbound-expiration], a[data-inbound-url]')
+        .forEach(anchor => {
           if (anchor.dataset) {
             if (anchor.dataset.outboundUrl) delete anchor.dataset.outboundUrl;
             if (anchor.dataset.outboundExpiration) delete anchor.dataset.outboundExpiration;
@@ -861,16 +861,16 @@
     }
 
     function processComment(thing) {
-        // Expand/collapse comment tree
-        thing.ondblclick = event => {
-          if (config.isTweakEnabled('collapsableComments')) {
-            stopEvent(event);
-            $(thing).toggleClass("collapsed noncollapsed");
-            return false;
-          } else {
-            return true; // Pass-through
-          }
-        };
+      // Expand/collapse comment tree
+      thing.ondblclick = event => {
+        if (config.isTweakEnabled('collapsableComments')) {
+          stopEvent(event);
+          $(thing).toggleClass("collapsed noncollapsed");
+          return false;
+        } else {
+          return true; // Pass-through
+        }
+      };
     };
 
   }
@@ -884,10 +884,10 @@
       addScrollListener();
     });
 
-    return {scrollListener, addScrollListener};
+    return { scrollListener, addScrollListener };
 
     function scrollListener(event) {
-      const evt = event || {pageY:0};
+      const evt = event || { pageY: 0 };
       if (document.body.clientHeight - (window.scrollY + window.innerHeight) < 200) {
         CONFIG.then(config => {
           if (config.isTweakEnabled('infiniteScrolling')) {
@@ -897,7 +897,7 @@
       }
     }
 
-    function addScrollListener()    { window.addEventListener('scroll',    scrollListener); }
+    function addScrollListener() { window.addEventListener('scroll', scrollListener); }
     function removeScrollListener() { window.removeEventListener('scroll', scrollListener); }
 
     function loadMorePosts() {
@@ -1013,9 +1013,9 @@
           stopEvent(event);
           config.setTweak(tweak.id, !config.isTweakEnabled(tweak.id))
             .then(() => {
-            _applyTweakCSS();
-            updateMenu(menu);
-          });
+              _applyTweakCSS();
+              updateMenu(menu);
+            });
         }
       };
     }
