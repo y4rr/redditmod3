@@ -994,8 +994,11 @@
     const TWEAK_STYLE_ID = 'redditmod-tweak-style';
 
     return new Promise(resolve => {
-      // Apply tweaks CSS before MENU loads
+      // Apply tweaks  before MENU loads
       _applyTweakCSS();
+
+
+     _applyTweakJS();
 
       menuPromise.then(menu => {
         updateMenu(menu);
