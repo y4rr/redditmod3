@@ -78,7 +78,9 @@
         autoAlign: true,
         infiniteScrolling: true,
         loadPostsInline: true,
-        collapsableComments: true
+        collapsableComments: true,
+        usernamePrivacy: true,,
+        karmaPrivacy: true
       }
     };
 
@@ -119,7 +121,9 @@
         { name: 'Infinite Scrolling', id: 'infiniteScrolling', enabled: config.tweaks.infiniteScrolling, title: "Load next page when you reach the bottom" },
         { name: 'Load Pages Inline', id: 'loadPostsInline', enabled: config.tweaks.loadPostsInline, title: "Add the next page of posts to the bottom of the current page (ignored when 'Infinite Scrolling' is enabled)." },
         { name: 'Auto-align on expand', id: 'autoAlign', enabled: config.tweaks.autoAlign, title: "Scroll so the clicked post is at the top of the screen." },
-        { name: 'Collapsable comments', id: 'collapsableComments', enabled: config.tweaks.collapsableComments, title: "Double click on a comment to collapse its tree" }
+        { name: 'Collapsable comments', id: 'collapsableComments', enabled: config.tweaks.collapsableComments, title: "Double click on a comment to collapse its tree" },
+        { name: 'Username Privacy', id: 'usernamePrivacy', enabled: config.tweaks.usernamePrivacy, title: "Hide username" },
+        { name: 'Karma Privacy', id: 'karmaPrivacy', enabled: config.tweaks.karmaPrivacy, title: "Hide karma" }
       ];
     }
 
@@ -1003,6 +1007,18 @@
 
     function _applyTweakCSS() {
       CSS.applyStyle(TWEAK_STYLE_ID, config.getTweakCSS());
+    }
+
+    function _applyTweakJS() {
+      const username = document.querySelector('span.user > a');
+      if (username && config.isTweakEnabled('usernamePrivacy')) {
+        username.innerHTML = 'Hidden';
+      }
+
+      const karma = document.querySelector('span.userkarma');
+      if (karma && config.isTweakEnabled('karmaPrivacy')) {
+        karma.innerHTML = '~';
+      }
     }
 
     function _tweakLinkProps(tweak, menu) {
