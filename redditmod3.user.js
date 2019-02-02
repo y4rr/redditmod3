@@ -5,7 +5,7 @@
 // @description inline posts/comments, endless scrolling, and other improvements for reddit.com
 // @include     http://*.reddit.com/*
 // @include     https://*.reddit.com/*
-// @version     1.0.1
+// @version     1.0.2
 // @license     WTFPL
 // @grant       GM.getValue
 // @grant       GM.setValue
