@@ -71,9 +71,9 @@
 
 
     // Existing values are the *default*
+    const CSS_COLLAPSABLE_COMMENTS = '.comment.collapsed {padding-bottom: 20px;padding-top: 8px;} .comment.collapsed .tagline, .comment.collapsed .tagline a, .comment.collapsed .search-result-meta, .comment.collapsed .search-result-meta a, .comment.collapsed > span {font-style: normal !important;} .tagline > a.expamd {display: none !important}';
+
     const config = {
-      const CSS_COLLAPSABLE_COMMENTS = '.comment.collapsed {padding-bottom: 20px;padding-top: 8px;} .comment.collapsed .tagline, .comment.collapsed .tagline a, .comment.collapsed .search-result-meta, .comment.collapsed .search-result-meta a, .comment.collapsed > span {font-style: normal !important;} .tagline > a.expamd {display: none !important}';
-      
       tweaks: {
         autoAlign: true,
         infiniteScrolling: true,
@@ -670,17 +670,17 @@
       return new Promise((resolve, reject) => {
         _getDocument(url, {}, false)
           .then(doc => {
-          const commentArea = doc.querySelector('.commentarea .sitetable');
+          const commentArea = doc.querySelector('.commentarea .sitetable > *:not(.clearleft)');
           const container = _create('div', {className:'redditmod-media-comments-area'});
-          commentArea.querySelectorAll('.entry').forEach(entry => {
-            entry.onclick = event => {
-              if (event && event.target && event.target.tagName === 'A') {
-                return true; // Pass-through
-              } else {
+          commentArea.querySelectorAll('.thing').forEach(thing => {
+            thing.ondblclick = event => {
+              if (config.isTweakEnabled('collapsableComments')) {
                 // Expand/collapse comment tree
                 stopEvent(event);
-                entry.querySelector('a.expand').click();
+               $(thing).toggleClass("collapsed noncollapsed");
                 return false;
+              } else {
+                return true; // Pass-through
               }
             };
           });
@@ -856,6 +856,23 @@
         });
     }
 
+    function processComments() {
+      document.querySelectorAll('.commentarea .sitetable > *:not(.clearleft)').forEach(thing => processComment(thing));
+    }
+
+    function processComment(thing) {
+        // Expand/collapse comment tree
+        thing.ondblclick = event => {
+          if (config.isTweakEnabled('collapsableComments')) {
+            stopEvent(event);
+            $(thing).toggleClass("collapsed noncollapsed");
+            return false;
+          } else {
+            return true; // Pass-through
+          }
+        };
+    };
+
   }
 
   function Navigation(processor) {
@@ -1028,4 +1045,4 @@
     });
 
   });
-})();   
+})();
