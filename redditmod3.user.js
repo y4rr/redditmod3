@@ -49,8 +49,8 @@
     function debug() {
         if (!DEBUG) return;
         const args = ['[Redditmod@'
-        + (new Error()).stack.replace(/.*\?id=[a-f0-9\-]*:/g, '').replace(/@.*[^\r\n]/g, '').replace(/\n\n/g, '').replace(/\n$/g, '').replace(/\n/g, ' <- ')
-        + ']'];
+            + (new Error()).stack.replace(/.*\?id=[a-f0-9\-]*:/g, '').replace(/@.*[^\r\n]/g, '').replace(/\n\n/g, '').replace(/\n$/g, '').replace(/\n/g, ' <- ')
+            + ']'];
         for (let i = 0; i < arguments.length; i++) {
             args.push(arguments[i]);
         }
@@ -114,51 +114,22 @@
 
         // =========================================
         // Tweaks
-        function isTweakEnabled(tweakID) {
-            return (config.tweaks[tweakID] === true);
-        }
+        function isTweakEnabled(tweakID) { return (config.tweaks[tweakID] === true); }
 
         function getTweaks() {
             return [
-                {
-                    name: 'Infinite Scrolling',
-                    id: 'infiniteScrolling',
-                    enabled: config.tweaks.infiniteScrolling,
-                    title: "Load next page when you reach the bottom"
-                },
-                {
-                    name: 'Load Pages Inline',
-                    id: 'loadPostsInline',
-                    enabled: config.tweaks.loadPostsInline,
-                    title: "Add the next page of posts to the bottom of the current page (ignored when 'Infinite Scrolling' is enabled)."
-                },
-                {
-                    name: 'Auto-align on expand',
-                    id: 'autoAlign',
-                    enabled: config.tweaks.autoAlign,
-                    title: "Scroll so the clicked post is at the top of the screen."
-                },
-                {
-                    name: 'Collapsable comments',
-                    id: 'collapsableComments',
-                    enabled: config.tweaks.collapsableComments,
-                    title: "Double click on a comment to collapse its tree"
-                },
-                {
-                    name: 'Username Privacy',
-                    id: 'usernamePrivacy',
-                    enabled: config.tweaks.usernamePrivacy,
-                    title: "Hide username"
-                },
-                {name: 'Karma Privacy', id: 'karmaPrivacy', enabled: config.tweaks.karmaPrivacy, title: "Hide karma"}
+                { name: 'Infinite Scrolling', id: 'infiniteScrolling', enabled: config.tweaks.infiniteScrolling, title: "Load next page when you reach the bottom" },
+                { name: 'Load Pages Inline', id: 'loadPostsInline', enabled: config.tweaks.loadPostsInline, title: "Add the next page of posts to the bottom of the current page (ignored when 'Infinite Scrolling' is enabled)." },
+                { name: 'Auto-align on expand', id: 'autoAlign', enabled: config.tweaks.autoAlign, title: "Scroll so the clicked post is at the top of the screen." },
+                { name: 'Collapsable comments', id: 'collapsableComments', enabled: config.tweaks.collapsableComments, title: "Double click on a comment to collapse its tree" },
+                { name: 'Username Privacy', id: 'usernamePrivacy', enabled: config.tweaks.usernamePrivacy, title: "Hide username" },
+                { name: 'Karma Privacy', id: 'karmaPrivacy', enabled: config.tweaks.karmaPrivacy, title: "Hide karma" }
             ];
         }
 
         function getTweakCSS() {
             const results = [];
-            if (config.tweaks.collapsableComments) {
-                results.push(CSS_COLLAPSABLE_COMMENTS);
-            }
+            if (config.tweaks.collapsableComments) { results.push(CSS_COLLAPSABLE_COMMENTS); }
             // if (config.tweaks.noAds)           { results.push(CSS_NO_ADS); }
             // if (config.tweaks.noChat)          { results.push(CSS_NO_CHAT); }
             // if (config.tweaks.noSublist)       { results.push(CSS_NO_SUBLIST); }
@@ -184,13 +155,12 @@
         const onHead = _onNode('head'); /* Wait for <head> to appear. */
         const onBody = _onNode('body'); /* Wait for <body> to appear. */
 
-        return {onDOM, onHead, applyStyle, removeStyle};
+        return { onDOM, onHead, applyStyle, removeStyle };
 
         /** Promises a child node immediately under the root `document`. Waits if node is not found. */
         function _onNode(documentKey) {
             return new Promise(resolve => {
                 const timer = setInterval(promiseNode, 50);
-
                 function promiseNode() {
                     if (document[documentKey]) {
                         clearInterval(timer);
@@ -206,7 +176,7 @@
                 if (document.readyState === 'interactive' || document.readyState === 'complete') {
                     resolve();
                 } else {
-                    document.addEventListener('DOMContentLoaded', function (event) {
+                    document.addEventListener('DOMContentLoaded', function(event) {
                         document.removeEventListener('DOMContentLoaded', event.callee);
                         resolve();
                     });
@@ -229,7 +199,7 @@
                         style.removeChild(style.firstChild);
                     } else {
                         style = document.createElement('style');
-                        Object.assign(style, {id: id, type: 'text/css', className: 'redditmod-style'});
+                        Object.assign(style, { id: id, type: 'text/css', className: 'redditmod-style' });
                     }
                     style.appendChild(document.createTextNode(css));
                     head.appendChild(style);
@@ -253,19 +223,19 @@
 
         let isInitialized = false;
         let config;
-        return {init};
+        return { init };
 
         function init(theConfig) {
             config = theConfig;
             return new Promise(resolve => {
                 if (isInitialized) {
-                    resolve({updateMenuSection});
+                    resolve({ updateMenuSection });
                 } else {
                     CSS.onDOM().then(() => {
                         resetMenu();
                         CSS.applyStyle(MENU_STYLE_ID, MENU_STYLE);
                         isInitialized = true;
-                        resolve({updateMenuSection});
+                        resolve({ updateMenuSection });
                     });
                 }
             });
@@ -290,12 +260,12 @@
             if (!dropdown) return;
 
             if (document.querySelector('.drop-choices.srdrop .redditmod-menu-header') !== null && document.querySelector('#' + id) === null) {
-                create('hr', {className: 'redditmod-menu-spacer'}, dropdown);
+                create('hr', { className: 'redditmod-menu-spacer' }, dropdown);
             }
 
-            const section = document.querySelector('#' + id) || create('div', {id}, dropdown);
-            const header = section.querySelector('.redditmod-menu-header') || create('h3', {className: 'redditmod-menu-header'}, section);
-            const links = section.querySelector('.redditmod-menu-links') || create('div', {className: 'redditmod-menu-links'}, section);
+            const section = document.querySelector('#' + id) || create('div', { id }, dropdown);
+            const header = section.querySelector('.redditmod-menu-header') || create('h3', { className: 'redditmod-menu-header' }, section);
+            const links = section.querySelector('.redditmod-menu-links') || create('div', { className: 'redditmod-menu-links' }, section);
 
             header.textContent = title;
             links.innerHTML = '';
@@ -323,7 +293,7 @@
 
         CSS.applyStyle(MEDIA_STYLE_ID, MEDIA_STYLE_CSS);
 
-        return {postClick};
+        return { postClick };
 
         function postClick(thing, event) {
             const target = event.target;
@@ -374,21 +344,21 @@
                 return existing;
             }
 
-            const commentsBox = _create('div', {className: CLASS_COMMENTS}, thing);
+            const commentsBox = _create('div', { className: CLASS_COMMENTS }, thing);
             commentsBox.onclick = stopEvent;
             commentsBox._toggle = () => {
                 thing.classList.remove(CLASS_MEDIA_EXPANDED);
                 thing.classList.toggle(CLASS_COMMENTS_EXPANDED);
             };
 
-            const spinner = _create('div', {className: CLASS_SPINNER}, commentsBox);
+            const spinner = _create('div', { className: CLASS_SPINNER }, commentsBox);
             RedditCommentsPromise(thingUrl)
                 .then(container => {
                     commentsBox.removeChild(spinner);
                     commentsBox.appendChild(container);
                 }).catch(reason => {
-                debug('RedditCommentsPromise rejected, reason:', reason);
-            });
+                    debug('RedditCommentsPromise rejected, reason:', reason);
+                });
 
             return commentsBox;
         }
@@ -399,7 +369,7 @@
             if (existingMediabox) return existingMediabox;
 
             // Create a custom mediabox
-            const mediaBox = _create('div', {className: CLASS_MEDIABOX}, thing);
+            const mediaBox = _create('div', { className: CLASS_MEDIABOX }, thing);
             mediaBox.onclick = event => {
                 stopEvent(event);
                 thing.classList.remove(CLASS_COMMENTS_EXPANDED);
@@ -412,12 +382,12 @@
                 }
                 CONFIG.then(config => {
                     if (config.isTweakEnabled('autoAlign')) {
-                        thing.scrollIntoView({block: 'start', inline: 'nearest', behavior: 'smooth'});
+                        thing.scrollIntoView({ block: 'start', inline: 'nearest', behavior: 'smooth' });
                     }
-                });
+                })
             };
 
-            const spinner = _create('div', {className: CLASS_SPINNER}, mediaBox);
+            const spinner = _create('div', { className: CLASS_SPINNER }, mediaBox);
 
             mediaBoxPromise(thingUrl)
                 .then(media => {
@@ -425,11 +395,11 @@
                     mediaBox.removeChild(spinner);
                     mediaBox.appendChild(media);
                 }).catch(reason => {
-                debug('mediaboxPromise rejected, reason:', reason);
-                mediaBox.removeChild(spinner);
-                const errorBox = _create('div', {className: CLASS_ERROR}, mediaBox);
-                errorBox.textContent = reason;
-            });
+                    debug('mediaboxPromise rejected, reason:', reason);
+                    mediaBox.removeChild(spinner);
+                    const errorBox = _create('div', { className: CLASS_ERROR }, mediaBox);
+                    errorBox.textContent = reason;
+                });
             return mediaBox;
         }
 
@@ -439,33 +409,17 @@
                 const domain = url.hostname.replace(/^(?:.*\.)?(\w+\.\w+)$/, '$1');
                 let promise;
                 switch (domain) {
-                    case 'imgur.com':
-                        promise = ImgurMediaPromise(url);
-                        break;
-                    case 'gfycat.com':
-                        promise = GfycatMediaPromise(url);
-                        break;
+                    case 'imgur.com': promise = ImgurMediaPromise(url); break;
+                    case 'gfycat.com': promise = GfycatMediaPromise(url); break;
                     //           case 'soundcloud.com': promise = SoundcloudPromise(url);   break;
                     //           case 'explosm.net':    promise = ExplosmPromise(url);      break;
-                    case 'imgflip.com':
-                        promise = ImgflipPromise(url);
-                        break;
-                    case 'streamable.com':
-                        promise = StreamablePromise(url);
-                        break;
-                    case 'instagram.com':
-                        promise = InstagramPromise(url);
-                        break;
-                    case 'deviantart.com':
-                        promise = DeviantartPromise(url);
-                        break;
+                    case 'imgflip.com': promise = ImgflipPromise(url); break;
+                    case 'streamable.com': promise = StreamablePromise(url); break;
+                    case 'instagram.com': promise = InstagramPromise(url); break;
+                    case 'deviantart.com': promise = DeviantartPromise(url); break;
                     //           case 'xkcd.com':       promise = XkcdPromise(url);         break;
-                    case 'reddit.com':
-                        promise = RedditPromise(url);
-                        break;
-                    default:
-                        promise = GenericMediaPromise(url);
-                        break;
+                    case 'reddit.com': promise = RedditPromise(url); break;
+                    default: promise = GenericMediaPromise(url); break;
                 }
                 promise.then(resolve).catch(reject);
             });
@@ -485,7 +439,7 @@
         function _getJSON(url, headers, use_GM_XHR) {
             return new Promise((resolve, reject) => {
                 if (!headers) {
-                    headers = {'Accept': 'application/json'};
+                    headers = { 'Accept': 'application/json' };
                 } else if (!headers.Accept) {
                     headers.Accept = 'application/json';
                 }
@@ -505,7 +459,7 @@
         }
 
         function _getWEB(url, headers, use_GM_XHR) {
-            return new Promise(function (resolve, reject) {
+            return new Promise(function(resolve, reject) {
                 if (!headers) {
                     headers = {};
                 }
@@ -517,7 +471,7 @@
                         headers: headers,
                         onabort: onError,
                         onerror: onError,
-                        onload: function (response) {
+                        onload: function(response) {
                             debug('MEDIA._getWEB() got GM.xmlHttpRequest response (' + response.responseText.length.toLocaleString() + ' bytes)');
                             resolve(response.responseText);
                         }
@@ -525,7 +479,7 @@
                 } else {
                     debug('MEDIA._getWEB() via XMLHttpRequest(), fetching url:', url, 'with headers', headers);
                     const xhr = new XMLHttpRequest();
-                    xhr.onload = function (response) {
+                    xhr.onload = function(response) {
                         debug('MEDIA._getWEB() got response (' + response.target.responseText.length.toLocaleString() + ' bytes)');
                         resolve(response.target.responseText);
                     };
@@ -571,13 +525,13 @@
         function PostlightMediaPromise(url) {
             return new Promise((resolve, reject) => {
                 const postlightUrl = 'https://mercury.postlight.com/parser?url=' + encodeURIComponent(url);
-                const headers = {'X-api-key': 'NtFdFjTYzQXF4WUWBivfsnTj0zXZyvwCKbSQeuAB'};
+                const headers = { 'X-api-key': 'NtFdFjTYzQXF4WUWBivfsnTj0zXZyvwCKbSQeuAB' };
                 _getJSON(postlightUrl, headers, true)
                     .then(resp => {
                         if (resp.content === '<body></body>') {
                             reject('[PostlightMediaProimse] Postlight returned empty content for ' + url);
                         } else {
-                            resolve(_create('div', {innerHTML: resp.content, className: 'redditmod-media-other'}));
+                            resolve(_create('div', { innerHTML: resp.content, className: 'redditmod-media-other' }));
                         }
                     })
                     .catch(reject);
@@ -594,11 +548,11 @@
                 let index = 0;
                 const container = _create('div');
                 const nav = _create('div', {}, container);
-                const navPrev = _create('a', {textContent: '<', href: '#'}, nav);
-                const navCurrent = _create('span', {textContent: '1'}, nav);
-                const navSep = _create('span', {textContent: '/'}, nav);
-                const navTotal = _create('span', {textContent: urls.length}, nav);
-                const navNext = _create('a', {textContent: '>', href: '#'}, nav);
+                const navPrev = _create('a', { textContent: '<', href: '#' }, nav);
+                const navCurrent = _create('span', { textContent: '1' }, nav);
+                const navSep = _create('span', { textContent: '/' }, nav);
+                const navTotal = _create('span', { textContent: urls.length }, nav);
+                const navNext = _create('a', { textContent: '>', href: '#' }, nav);
                 const imageDiv = _create('div', {}, container);
                 const image = _create('img', {
                     src: urls[0],
@@ -641,7 +595,7 @@
                 });
                 video._onhide = video.pause;
                 video._onshow = video.load;
-                urls.forEach(url => _create('source', {src: url}, video));
+                urls.forEach(url => _create('source', { src: url }, video));
                 resolve(video);
             });
         }
@@ -721,7 +675,7 @@
                 _getDocument(url, {}, false)
                     .then(doc => {
                         const commentArea = doc.querySelector('.commentarea .sitetable > *:not(.clearleft)');
-                        const container = _create('div', {className: 'redditmod-media-comments-area'});
+                        const container = _create('div', { className: 'redditmod-media-comments-area' });
                         commentArea.querySelectorAll('.thing').forEach(thing => {
                             thing.ondblclick = event => {
                                 if (config.isTweakEnabled('collapsableComments')) {
@@ -735,8 +689,7 @@
                             };
                         });
                         container.appendChild(commentArea);
-                        container._click = () => {
-                        };
+                        container._click = () => { };
                         resolve(container);
                     })
                     .catch(reject);
@@ -766,7 +719,7 @@
         }
 
         function ExplosmPromise(url) {
-            return new Promise(function (resolve, reject) {
+            return new Promise(function(resolve, reject) {
                 _getDocument(url.toString(), {}, true)
                     .then(doc => {
                         const imageMeta = doc.querySelector('img#main-comic');
@@ -781,7 +734,7 @@
         }
 
         function ImgflipPromise(url) {
-            return new Promise(function (resolve, reject) {
+            return new Promise(function(resolve, reject) {
                 const urlText = url.toString();
                 if (/\.(jpg|jpeg|png)$/i.test(urlText)) {
                     GenericImagePromise([urlText]).then(resolve).catch(reject);
@@ -835,7 +788,7 @@
         }
 
         function DeviantartPromise(url) {
-            return new Promise(function (resolve, reject) {
+            return new Promise(function(resolve, reject) {
                 _getDocument(url.toString(), {}, true).then(doc => {
                     const fullImg = doc.querySelector('img[dev-content-full]');
                     const smallImg = doc.querySelector('meta[property="og:image"]');
@@ -884,7 +837,7 @@
             menuPromise.then(menu => {
                 processPosts();
                 processComments();
-                resolve({processors, processPost, processPosts, processComment, processComments});
+                resolve({ processors, processPost, processPosts, processComment, processComments });
             });
         });
 
@@ -922,7 +875,7 @@
                     return true; // Pass-through
                 }
             };
-        }
+        };
 
     }
 
@@ -935,10 +888,10 @@
             addScrollListener();
         });
 
-        return {scrollListener, addScrollListener};
+        return { scrollListener, addScrollListener };
 
         function scrollListener(event) {
-            const evt = event || {pageY: 0};
+            const evt = event || { pageY: 0 };
             if (document.body.clientHeight - (window.scrollY + window.innerHeight) < 200) {
                 CONFIG.then(config => {
                     if (config.isTweakEnabled('infiniteScrolling')) {
@@ -948,13 +901,8 @@
             }
         }
 
-        function addScrollListener() {
-            window.addEventListener('scroll', scrollListener);
-        }
-
-        function removeScrollListener() {
-            window.removeEventListener('scroll', scrollListener);
-        }
+        function addScrollListener() { window.addEventListener('scroll', scrollListener); }
+        function removeScrollListener() { window.removeEventListener('scroll', scrollListener); }
 
         function loadMorePosts() {
             const nextButton = document.querySelector('.next-button a');
@@ -967,7 +915,7 @@
 
             debug('[Navigation.loadMorePosts] Fetching URL (via nextButton.href):', nextButton.href);
             const xhr = new XMLHttpRequest();
-            xhr.onload = function (response) {
+            xhr.onload = function(response) {
                 _injectPosts(response.target);
             };
             xhr.onerror = _onError;
@@ -1117,3 +1065,4 @@
 
     });
 })();
+
